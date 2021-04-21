@@ -77,13 +77,36 @@ public class Compressor{
 					table[index] = new LinkedList<Entry<K,V>>;
 				}
 				for(Entry<K,V> nextItem: table[index]){
-					if(nextItem.get(key) == key){
+					if(nextItem.getKey() == key){
 						return nextItem.setValue(value);
+					}	
+				}
+				table[index].set(new Entry<K key, V value>);
+				numKeys++;
+				if(load_factor > LOAD_THRESHOLD){
+					//rehash
+				}
+				return null;
+			}
+
+			public K remove(K key){
+				int index = key.hashcode() % table.length;
+				if(index < 0){
+					index += table.length;
+				}
+				if(table[index] == null){
+					return null;
+				}
+				for(Entry<K, V> nextItem: table[index]){
+					if(nextItem.getKey() == key){
+						table[index].remove(key)
+						numKeys--;
+						if(table[index].size == 0){
+							table[index = null;
+						}
 					}
-					else{
-					
-					}
-					
+				}
+			}
 
 
 
