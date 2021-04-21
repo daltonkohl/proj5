@@ -3,18 +3,17 @@ import java.io.*;
 
 interface KWHashMap<K, V>{
 	V get (K key);
-	boolean isEmpty();
 	V put (K key, V value);
 }
 
 
-public class Compressor{
+public class Compress{
 	public class HashTableChain<K,V> implements KWHashMap<K,V>{
-		public static class Entry<K,V>{
+		public class Entry<K,V>{
 			private final K key;
 			private V value;
 
-			public Entry<K k, V v>{
+			public Entry(K k, V v){
 				key = k;	
 				value = v;
 			}
@@ -36,8 +35,9 @@ public class Compressor{
 			public String toString(){
 				return key.toString() + " = " + value.toString();
 			}
+		}
 
-			private LinkedList<Entry<K,V>[] table;
+			private LinkedList<Entry<K,V>>[] table;
 			private int numKeys;
 			private static final int CAPACITY = 0; //**NEEDS CHANGED**//
 			private static final double LOAD_THRESHOLD = 0; //**NEEDS CHANGED**//
@@ -61,36 +61,36 @@ public class Compressor{
 					return null;
 				}
 				for(Entry<K,V> nextItem: table[index]){
-					if(nextItem.getKey().equals(key){
+					if(nextItem.getKey().equals(key)){
 						return nextItem.getValue();
 					}
 				}
-				return null
+				return null;
 			}
 			
 			public V put(K key, V value){
-				int index = key.hashcode() % table.length;
+				int index = key.hashCode() % table.length;
 				if(index < 0){
 					index += table.length;
 				}
 				if(table[index] == null){
-					table[index] = new LinkedList<Entry<K,V>>;
+					table[index] = new LinkedList<Entry<K,V>>();
 				}
 				for(Entry<K,V> nextItem: table[index]){
-					if(nextItem.getKey() == key){
+					if(nextItem.getKey().equals(key)){ 
 						return nextItem.setValue(value);
 					}	
 				}
-				table[index].set(new Entry<K key, V value>);
+				table[index].push(new Entry<K, V>(key, value)); //i think this needs to be push() -- changed from set
 				numKeys++;
-				if(load_factor > LOAD_THRESHOLD){
+				/*if(load_factor > LOAD_THRESHOLD){
 					//rehash
-				}
+				}*/
 				return null;
 			}
 
 			public K remove(K key){
-				int index = key.hashcode() % table.length;
+				int index = key.hashCode() % table.length;
 				if(index < 0){
 					index += table.length;
 				}
@@ -98,16 +98,20 @@ public class Compressor{
 					return null;
 				}
 				for(Entry<K, V> nextItem: table[index]){
-					if(nextItem.getKey() == key){
-						table[index].remove(key)
+					if(nextItem.getKey().equals(key)){
+						table[index].remove(key);
 						numKeys--;
-						if(table[index].size == 0){
-							table[index = null;
+						if(table[index].size() == 0){
+							table[index] = null;
 						}
 					}
 				}
+			return null;
 			}
-
+	}
+	public static void main(String[] args){
+			
+}
 
 
 
