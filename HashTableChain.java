@@ -82,15 +82,17 @@ public class HashTableChain<K,V> implements KWHashMap<K,V>{
 			}
 			table[index].push(new Entry<K, V>(key, value)); //i think this needs to be push() -- changed from set
 			numKeys++;
-			if(numkeys/table.length > LOAD_THRESHOLD){
+			if(table.length / numKeys > LOAD_THRESHOLD){
 				//rehash -- probably isn't correct??
-				int capacity = CAPACITY;
-				capacity = getNextPrime(capacity);
-				LinkedList<Entry<K, V>> temp = table;
+				int capacity = table.length;
+				capacity = getNextPrime.getNextPrime(capacity);
+				LinkedList<Entry<K, V>>[] temp = table;
 				table  = new LinkedList[capacity];
-				for(Entry<K,V> entry : temp>{
-					index = entry.getKey().hashCode() % table.length;
-					table[index].push(entry);
+				for(LinkedList<Entry<K,V>> list : temp){
+					for(Entry<K,V> entry : list){
+						index = entry.getKey().hashCode() % table.length;
+						table[index].push(entry);
+					}
 				}
 
 				

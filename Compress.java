@@ -17,12 +17,12 @@ public class Compress{
 			String inputString = tokens.nextToken();
 			String oldInput = inputString;
 			while(tokens.hasMoreTokens()){
-				if(hashTable.get(getKey(inputString)) == null){
-					outputString += getKey(oldInput);
+				if(hashTable.get(getKey(inputString)) == null){ //key is not in array
+					outputString += getKey(inputString);
 					hashTable.put(getKey(inputString), inputString);
 					inputString = nextToken();  //MIGHT BE WRONG
 				}
-				else{
+				else{ //key is in array
 					oldInput = inputString;
 					inputString += tokens.nextToken();
 				}
