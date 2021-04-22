@@ -39,7 +39,7 @@ public class HashTableChain<K,V> implements KWHashMap<K,V>{
 		private LinkedList<Entry<K,V>>[] table;
 		private int numKeys;
 		private static final int CAPACITY = 11; //**NEEDS CHANGED**//
-		private static final double LOAD_THRESHOLD = 0; //**NEEDS CHANGED**//
+		private static final double LOAD_THRESHOLD = .7; //**NEEDS CHANGED**//
 
 		public HashTableChain(){
 			table = new LinkedList[CAPACITY];
@@ -82,9 +82,19 @@ public class HashTableChain<K,V> implements KWHashMap<K,V>{
 			}
 			table[index].push(new Entry<K, V>(key, value)); //i think this needs to be push() -- changed from set
 			numKeys++;
-			/*if(load_factor > LOAD_THRESHOLD){
-				//rehash
-			}*/
+			if(numkeys/table.length > LOAD_THRESHOLD){
+				//rehash -- probably isn't correct??
+				int capacity = CAPACITY;
+				capacity = getNextPrime(capacity);
+				LinkedList<Entry<K, V>> temp = table;
+				table  = new LinkedList[capacity];
+				for(Entry<K,V> entry : temp>{
+					index = entry.getKey().hashCode() % table.length;
+					table[index].push(entry);
+				}
+
+				
+			}
 			return null;
 		}
 
@@ -107,5 +117,10 @@ public class HashTableChain<K,V> implements KWHashMap<K,V>{
 			}
 		return null;
 		}
+
 }
+
+
+
+
 
