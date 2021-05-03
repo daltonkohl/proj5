@@ -38,7 +38,7 @@ public class HashTableChain<K,V> implements KWHashMap<K,V>{
 
 		private LinkedList<Entry<K,V>>[] table;
 		int numKeys;
-		private static final int CAPACITY = 11; //**NEEDS CHANGED**//
+		private static final int CAPACITY = 101; //**NEEDS CHANGED**//
 		private static final double LOAD_THRESHOLD = .7; //**NEEDS CHANGED**//
 
 		public HashTableChain(){
@@ -82,16 +82,27 @@ public class HashTableChain<K,V> implements KWHashMap<K,V>{
 			}
 			table[index].push(new Entry<K, V>(key, value)); //i think this needs to be push() -- changed from set
 			numKeys++;
-			if(table.length / numKeys > LOAD_THRESHOLD){
+			//System.out.println("before rehash");
+			if((numKeys / table.length) > LOAD_THRESHOLD){
 				//rehash -- probably isn't correct??
 				int capacity = table.length;
+				System.out.println("rehashed");
 				capacity = getNextPrime.getNextPrime(capacity);
 				LinkedList<Entry<K, V>>[] temp = table;
 				table  = new LinkedList[capacity];
 				for(LinkedList<Entry<K,V>> list : temp){
+					if(list != null){
 					for(Entry<K,V> entry : list){
-						index = entry.getKey().hashCode() % table.length;
-						table[index].push(entry);
+						//System.out.println(entry.getValue());
+						//System.out.println("index: "+index);
+						int newIndex = entry.getKey().hashCode() % table.length;
+						if(table[newIndex] == null){
+							table[newIndex] = new LinkedList<Entry<K,V>>();
+						}
+						table[newIndex].push(entry);
+						//new Entry<K, V>(entry.getKey(), entry.getValue()));
+						//System.out.println("DONE");
+						}
 					}
 				}
 
