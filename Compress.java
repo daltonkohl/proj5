@@ -4,19 +4,21 @@ import java.io.*;
 public class Compress{
 	public static void main(String[] args){
 	try{
-		String inputFile = args[0];
 		HashTableChain<String, String> hashTable = new HashTableChain<>();
 
-
-		BufferedReader input = new BufferedReader(new FileReader(inputFile));
+		String fileName = args[0];
+		File validateName =new File(fileName);
+		while (!validateName.exists() )
+			{
+				Scanner kb = new Scanner (System.in);
+				System.out.println("Please enter a valid file name: ");
+				fileName = kb.nextLine();
+				validateName = new File(fileName);
+			}	
+	
+		BufferedReader input = new BufferedReader(new FileReader(fileName));
 		String line;
-		StringTokenizer tokens;
 		String outputString="";
-		/*while((line = input.readLine()) != null){
-			line += "\n";
-			tokens = new StringTokenizer(line, "");
-			String inputString = tokens.nextToken();
-			String oldInput = inputString;**/
 			hashTable = loadAscii(hashTable);
 			String oldString;
 			//new Friday work 
@@ -51,7 +53,14 @@ public class Compress{
 	
 		
 		}
+
+		ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fileName +".zzz"));
+		output.writeUTF(outputString);
+		output.close();
 		System.out.println(outputString);
+		//ObjectInputStream binInput = new ObjectInputStream(new FileInputStream("tst.txt.zzz"));
+		//System.out.println(binInput.readUTF());
+		//binInput.close();
 		}
 		catch (FileNotFoundException f)
 		{
@@ -85,6 +94,7 @@ public class Compress{
 		//For this put statement, Ben did value "Integer.toBinaryString(i));
 			hashTable.put(((Character.toString((char)i))), String.valueOf(i));
 		}
+		hashTable.put("\n","128");
 		return hashTable;	
 	}	
 }

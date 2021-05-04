@@ -111,6 +111,7 @@ public class HashTableChain<K,V> implements KWHashMap<K,V>{
 			return null;
 		}
 
+
 		public K remove(K key){
 			int index = key.hashCode() % table.length;
 			if(index < 0){
