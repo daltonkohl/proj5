@@ -22,36 +22,87 @@ public class Decompress {
 		HashTableChain<String, String> hashTable = new HashTableChain<>();
 		hashTable = loadAscii(hashTable);
 			//System.out.println(file.read());	
-			String fromBinary = file.readUTF();
-			StringTokenizer tokens = new StringTokenizer(fromBinary, "");
+			//String fromBinary = file.readUTF();
+			//String readableString = fromBinary.replace("", " ").trim();
+			//System.out.println(readableString);
+			//StringTokenizer tokens = new StringTokenizer(readableString, " ");
 			String outputString = "";
 			String lastCode = "";
 			String old = "";
-			String newString = tokens.nextToken();
-			System.out.println("First Char: "+newString);
+		//	String newString = tokens.nextToken();
+			//System.out.println("First Char: "+newString);
 			//compress: String inputString = Character.toString((char)input.read());
 		
 			int putIndex = hashTable.numKeys;
-			while(tokens.hasMoreTokens()){
+			System.out.println(putIndex);
+			int currentNum = file.readInt();
+			int oldNum=0;
+			while(file.available()>0){
+				if(oldNum == 0)
+				{
+					outputString += hashTable.get(String.valueOf(currentNum));
+				}
+				else if(hashTable.get(String.valueOf(currentNum)) != null)
+					{
+						outputString += hashTable.get(String.valueOf(currentNum));
+						hashTable.put(String.valueOf((int)putIndex+32), hashTable.get(String.valueOf(oldNum)) + hashTable.get(String.valueOf(currentNum)).substring(0,1));//hashTable.get(String.valueOf(oldNum)).substring(0,1));
+						System.out.println("---IN DICT: output: "+ outputString);
+						System.out.println("---IN DICT: PUT: " + String.valueOf((int)putIndex+32) +" VALUE: " + ( hashTable.get(String.valueOf(oldNum)) + hashTable.get(String.valueOf(currentNum)).substring(0,1))); 
+					putIndex++;
+					}	
+				else
+					{
+						outputString += (hashTable.get(String.valueOf(oldNum)) + hashTable.get(String.valueOf(oldNum)).substring(0,1));
+						hashTable.put(String.valueOf(currentNum), hashTable.get(String.valueOf(oldNum)) + hashTable.get(String.valueOf(oldNum)).substring(0,1));
+
+					}
+				oldNum = currentNum;
+				currentNum = file.readInt();
+				if(file.available() ==0)
+					{
+						outputString += hashTable.get(String.valueOf(currentNum));
+						System.out.println("DONE!!!!!!!!!!!!!!!!!!!!!!");
+					}	
+				//oldNum = currentNum;
+				//currentNum = file.readInt();	
 				//while current string is in dictionary
 				//	add next index to current string
-				while(Integer.parseInt(newString) <32 || hashTable.get(newString) != null)
+				/*				while(currentNum <32 || hashTable.get(String.valueOf(currentNum)) != null)
 				{
+					oldNum = currentNum;
+
+
 					old = newString;
 					newString += tokens.nextToken();
+					System.out.println("---- old: " + old);
+					System.out.println("---- new: " + newString); 
+					System.out.println("---- lastCode: " + lastCode);
 					if (!tokens.hasMoreTokens())
 					{
 						old = newString;
+						System.out.println("LAST STRING NO MORE TOKENS: " + old);
 						break;
 					}
-					//compress: currentChar = input.read();
-					//compress: inputString += Character.toString((char)currentChar);
-				}
-				outputString += hashTable.get(old);
-				hashTable.put(String.valueOf(putIndex+33), lastCode + old.substring(0,1));
-				lastCode = old;
-				old="";
-				newString = newString.substring(newString.length()-1);
+				}*/
+			/*	outputString += hashTable.get(old);
+				System.out.println("Added :" + old + " to: " + outputString);
+				if(!lastCode.equals(""))
+				{
+					hashTable.put(String.valueOf((int)putIndex+32), hashTable.get(lastCode) + hashTable.get(old).substring(0,1));
+					System.out.println("PUTTING IN: Key= "+ String.valueOf((int)(putIndex+32)) + " Value =  " + hashTable.get(lastCode)+hashTable.get(old).substring(0,1));
+					putIndex++;
+				}*/
+				//first pass through 
+				/*else 
+				{
+					hashTable.put(String.valueOf((int)putIndex+32), hashTable.get(old) + hashTable.get(old).substring(0,1));
+					System.out.println("Added double firstCHar in case: " + String.valueOf((int)(putIndex+32)) + " VALIE = " + hashTable.get(old) + hashTable.get(old).substring(0,1));
+					putIndex++;
+				}*/	
+				//lastCode = old;
+				//old="";
+				//newString = newString.substring(newString.length()-1);
+				//putIndex++;
 				//if current string is not in dictionary 
 				//add previous string to output string
 				//add current string to dictionary 
@@ -62,13 +113,9 @@ public class Decompress {
 				putIndex++;	
 				inputString = inputString.substring(inputString.length()-1);
 				System.out.println("finished for loop");*/
-
-
-		
-		
 		
 		}
-		System.out.println(outputString);	
+		System.out.println("Final output string: " + outputString);	
 		}
 		
 		catch (FileNotFoundException f)
@@ -85,7 +132,7 @@ public class Decompress {
 
 	public static HashTableChain<String, String>  loadAscii(HashTableChain<String, String> hashTable)
 	{
-		for(int i =33; i<128; i++)
+		for(int i =32; i<128; i++)
 		{
 			//
 			//System.out.println("i: " +i);

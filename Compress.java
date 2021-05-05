@@ -22,9 +22,11 @@ public class Compress{
 			hashTable = loadAscii(hashTable);
 			String oldString;
 			//new Friday work 
-		
+			ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fileName + ".zzz"));
+
 			//need to figure out how to read entire file into one string
 			int currentChar;
+			int writeInt;
 			String inputString = Character.toString((char)input.read());
 			oldString = inputString;
 			int putIndex = hashTable.numKeys;
@@ -41,26 +43,36 @@ public class Compress{
 				//add previous string to output string
 				//add current string to dictionary 
 				System.out.println("string in dict: " + oldString + " output added: " + hashTable.get(oldString));
-				System.out.println("string not in dict: "+inputString + " added to dict: "+String.valueOf(putIndex+33));
-				outputString += hashTable.get(oldString);
-				hashTable.put(inputString, String.valueOf((putIndex)+33));
+				System.out.println("string not in dict: "+inputString + " added to dict: "+String.valueOf(putIndex+32));
+				//UTF WAYoutputString += hashTable.get(oldString);
+				//NEW
+				
+				outputString = hashTable.get(oldString);
+
+				hashTable.put(inputString, String.valueOf((putIndex)+32));
 				putIndex++;	
 				inputString = inputString.substring(inputString.length()-1);
-				System.out.println("finished for loop");
-
+				System.out.println("----WRITING INT: "+ hashTable.get(oldString));
+				
+				//NEW
+				writeInt = Integer.parseInt(hashTable.get(oldString));
+				output.writeInt(writeInt);
 				
 
 	
 		
 		}
 
-		ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fileName +".zzz"));
-		output.writeUTF(outputString);
+		//ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fileName +".zzz"));
+		//output.writeUTF(outputString);
 		output.close();
-		System.out.println(outputString);
-		//ObjectInputStream binInput = new ObjectInputStream(new FileInputStream("tst.txt.zzz"));
-		//System.out.println(binInput.readUTF());
-		//binInput.close();
+
+		PrintWriter logOutput = new PrintWriter(new FileOutputStream(fileName +".zzz.log"));
+		logOutput.println("Compression of "+ fileName);
+		logOutput.println("Compressed from ????"+ "to ???");
+		logOutput.println("The dictionary contains "+ hashTable.numKeys+ "total entires");
+		logOutput.println("The table was reshashed xyz(calculate this) times");
+		logOutput.close();
 		}
 		catch (FileNotFoundException f)
 		{
@@ -85,7 +97,7 @@ public class Compress{
 
 	public static HashTableChain<String, String>  loadAscii(HashTableChain<String, String> hashTable)
 	{
-		for(int i =33; i<128; i++)
+		for(int i =32; i<128; i++)
 		{
 			//
 			//System.out.println("i: " +i);
