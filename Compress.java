@@ -4,9 +4,10 @@ import java.io.*;
 public class Compress{
 	public static void main(String[] args){
 	try{
-		HashTableChain<String, String> hashTable = new HashTableChain<>();
-
 		String fileName = args[0];
+		boolean choosing = true;
+		while(choosing){
+		HashTableChain<String, String> hashTable = new HashTableChain<>();
 		File validateName =new File(fileName);
 		while (!validateName.exists() )
 			{
@@ -42,8 +43,8 @@ public class Compress{
 				//if current string is not in dictionary 
 				//add previous string to output string
 				//add current string to dictionary 
-				System.out.println("string in dict: " + oldString + " output added: " + hashTable.get(oldString));
-				System.out.println("string not in dict: "+inputString + " added to dict: "+String.valueOf(putIndex+32));
+				//	System.out.println("string in dict: " + oldString + " output added: " + hashTable.get(oldString));
+				//	System.out.println("string not in dict: "+inputString + " added to dict: "+String.valueOf(putIndex+32));
 				//UTF WAYoutputString += hashTable.get(oldString);
 				//NEW
 				
@@ -52,7 +53,7 @@ public class Compress{
 				hashTable.put(inputString, String.valueOf((putIndex)+32));
 				putIndex++;	
 				inputString = inputString.substring(inputString.length()-1);
-				System.out.println("----WRITING INT: "+ hashTable.get(oldString));
+				//	System.out.println("----WRITING INT: "+ hashTable.get(oldString));
 				
 				//NEW
 				writeInt = Integer.parseInt(hashTable.get(oldString));
@@ -69,10 +70,25 @@ public class Compress{
 
 		PrintWriter logOutput = new PrintWriter(new FileOutputStream(fileName +".zzz.log"));
 		logOutput.println("Compression of "+ fileName);
-		logOutput.println("Compressed from ????"+ "to ???");
-		logOutput.println("The dictionary contains "+ hashTable.numKeys+ "total entires");
-		logOutput.println("The table was reshashed xyz(calculate this) times");
+		File f = new File(fileName);
+		File compressed = new File(fileName + ".zzz");
+		logOutput.println("Compressed from "+ f.length()/1000 +" Kilobytes to "+ compressed.length()/1000 + " Kilobytes");
+		logOutput.println("The dictionary contains "+ hashTable.numKeys+ " total entires");
+		logOutput.println("The table was reshashed " + hashTable.timesRehashed + " times");
 		logOutput.close();
+		
+		
+		Scanner kb = new Scanner(System.in);
+		System.out.println("Would you like to Compress another file? (y/n)");
+		String choice = kb.nextLine();
+		if(choice.equals("y")){
+			System.out.println("Enter the filename :");
+			fileName = kb.nextLine();
+		}
+		else{
+			choosing = false;
+		}
+		}
 		}
 		catch (FileNotFoundException f)
 		{

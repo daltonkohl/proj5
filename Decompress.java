@@ -5,10 +5,16 @@ public class Decompress {
 		
 	public static void main(String args[])
 	{
-		boolean choosing = true;		
+		double timeStart = 0;
+		double timeFinish = 0;
+		boolean choosing = true;
+		HashTableChain<String, String> hashTable = new HashTableChain<>();
+		String fileName = "";
 		try{
 		
-		String fileName = args[0];
+		fileName = args[0];
+		while(choosing){
+		hashTable = new HashTableChain<>();
 		File validateName =new File(fileName);
 		while (!validateName.exists() || !fileName.substring(fileName.length()-4).equals(".zzz"))
 			{
@@ -18,20 +24,11 @@ public class Decompress {
 				validateName = new File(fileName);
 			}	
 		ObjectInputStream file  = new ObjectInputStream(new FileInputStream(fileName));		
-		
-		HashTableChain<String, String> hashTable = new HashTableChain<>();
+		timeStart = System.nanoTime();
 		hashTable = loadAscii(hashTable);
-			//System.out.println(file.read());	
-			//String fromBinary = file.readUTF();
-			//String readableString = fromBinary.replace("", " ").trim();
-			//System.out.println(readableString);
-			//StringTokenizer tokens = new StringTokenizer(readableString, " ");
 			String outputString = "";
 			String lastCode = "";
 			String old = "";
-		//	String newString = tokens.nextToken();
-			//System.out.println("First Char: "+newString);
-			//compress: String inputString = Character.toString((char)input.read());
 		
 			int putIndex = hashTable.numKeys;
 			System.out.println(putIndex);
@@ -46,8 +43,8 @@ public class Decompress {
 					{
 						outputString += hashTable.get(String.valueOf(currentNum));
 						hashTable.put(String.valueOf((int)putIndex+32), hashTable.get(String.valueOf(oldNum)) + hashTable.get(String.valueOf(currentNum)).substring(0,1));//hashTable.get(String.valueOf(oldNum)).substring(0,1));
-						System.out.println("---IN DICT: output: "+ outputString);
-						System.out.println("---IN DICT: PUT: " + String.valueOf((int)putIndex+32) +" VALUE: " + ( hashTable.get(String.valueOf(oldNum)) + hashTable.get(String.valueOf(currentNum)).substring(0,1))); 
+						//	System.out.println("---IN DICT: output: "+ outputString);
+						//	System.out.println("---IN DICT: PUT: " + String.valueOf((int)putIndex+32) +" VALUE: " + ( hashTable.get(String.valueOf(oldNum)) + hashTable.get(String.valueOf(currentNum)).substring(0,1))); 
 					putIndex++;
 					}	
 				else
@@ -61,63 +58,39 @@ public class Decompress {
 				if(file.available() ==0)
 					{
 						outputString += hashTable.get(String.valueOf(currentNum));
-						System.out.println("DONE!!!!!!!!!!!!!!!!!!!!!!");
+						//	System.out.println("DONE!!!!!!!!!!!!!!!!!!!!!!");
 					}	
-				//oldNum = currentNum;
-				//currentNum = file.readInt();	
-				//while current string is in dictionary
-				//	add next index to current string
-				/*				while(currentNum <32 || hashTable.get(String.valueOf(currentNum)) != null)
-				{
-					oldNum = currentNum;
+
+		}
+		timeFinish = System.nanoTime();
+		//	System.out.println("Final output string: " + outputString);
+
+		PrintWriter decompOutput = new PrintWriter(new FileOutputStream(fileName.substring(0, (fileName.length() -8))));
+		decompOutput.println(outputString);
 
 
-					old = newString;
-					newString += tokens.nextToken();
-					System.out.println("---- old: " + old);
-					System.out.println("---- new: " + newString); 
-					System.out.println("---- lastCode: " + lastCode);
-					if (!tokens.hasMoreTokens())
-					{
-						old = newString;
-						System.out.println("LAST STRING NO MORE TOKENS: " + old);
-						break;
-					}
-				}*/
-			/*	outputString += hashTable.get(old);
-				System.out.println("Added :" + old + " to: " + outputString);
-				if(!lastCode.equals(""))
-				{
-					hashTable.put(String.valueOf((int)putIndex+32), hashTable.get(lastCode) + hashTable.get(old).substring(0,1));
-					System.out.println("PUTTING IN: Key= "+ String.valueOf((int)(putIndex+32)) + " Value =  " + hashTable.get(lastCode)+hashTable.get(old).substring(0,1));
-					putIndex++;
-				}*/
-				//first pass through 
-				/*else 
-				{
-					hashTable.put(String.valueOf((int)putIndex+32), hashTable.get(old) + hashTable.get(old).substring(0,1));
-					System.out.println("Added double firstCHar in case: " + String.valueOf((int)(putIndex+32)) + " VALIE = " + hashTable.get(old) + hashTable.get(old).substring(0,1));
-					putIndex++;
-				}*/	
-				//lastCode = old;
-				//old="";
-				//newString = newString.substring(newString.length()-1);
-				//putIndex++;
-				//if current string is not in dictionary 
-				//add previous string to output string
-				//add current string to dictionary 
-			//	System.out.println("string in dict: " + oldString + " output added: " + hashTable.get(oldString));
-			//	System.out.println("string not in dict: "+inputString + " added to dict: "+String.valueOf(putIndex+33));
-				/*outputString += hashTable.get(oldString);
-				hashTable.put(inputString, String.valueOf((putIndex)+34));
-				putIndex++;	
-				inputString = inputString.substring(inputString.length()-1);
-				System.out.println("finished for loop");*/
+		PrintWriter logOutput = new PrintWriter(new FileOutputStream(fileName.substring(0, (fileName.length()-4)) +".log"));
 		
+		double timeSeconds = (timeFinish - timeStart) / 1000000000;
+		logOutput.println("Decompression for file "+ fileName);
+		logOutput.println("Decompression took " + timeSeconds + " seconds");
+		logOutput.println("The Table is doubled "+ hashTable.timesRehashed + " times");
+
+
+		logOutput.close();
+	
+		Scanner kb = new Scanner(System.in);
+		System.out.println("Would you like to Decompress another file (y/n)");
+		String cont = kb.nextLine();
+		if(cont.equals("y")){
+			System.out.println("Enter the filename ending in .zzz");
+			fileName = kb.nextLine();
 		}
-		System.out.println("Final output string: " + outputString);	
+		else{
+			choosing = false;
 		}
-		
+		}
+		}
 		catch (FileNotFoundException f)
 		{
 		//Scanner kb = new Scanner(System.in);
@@ -127,7 +100,7 @@ public class Decompress {
 		catch (IOException e) {
 		System.out.println(e.getMessage());
 		System.exit(1);
-		}	
+		}
 	}
 
 	public static HashTableChain<String, String>  loadAscii(HashTableChain<String, String> hashTable)

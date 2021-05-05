@@ -40,6 +40,7 @@ public class HashTableChain<K,V> implements KWHashMap<K,V>{
 		int numKeys;
 		private static final int CAPACITY = 101; //**NEEDS CHANGED**//
 		private static final double LOAD_THRESHOLD = .7; //**NEEDS CHANGED**//
+		int timesRehashed = 0;
 
 		public HashTableChain(){
 			table = new LinkedList[CAPACITY];
@@ -85,8 +86,8 @@ public class HashTableChain<K,V> implements KWHashMap<K,V>{
 			//System.out.println("before rehash");
 			if((numKeys / table.length) > LOAD_THRESHOLD){
 				//rehash -- probably isn't correct??
+				timesRehashed ++;
 				int capacity = table.length;
-				System.out.println("rehashed");
 				capacity = getNextPrime.getNextPrime(capacity);
 				LinkedList<Entry<K, V>>[] temp = table;
 				table  = new LinkedList[capacity];
@@ -96,6 +97,9 @@ public class HashTableChain<K,V> implements KWHashMap<K,V>{
 						//System.out.println(entry.getValue());
 						//System.out.println("index: "+index);
 						int newIndex = entry.getKey().hashCode() % table.length;
+						if(newIndex < 0){
+							newIndex += table.length;
+						}
 						if(table[newIndex] == null){
 							table[newIndex] = new LinkedList<Entry<K,V>>();
 						}
