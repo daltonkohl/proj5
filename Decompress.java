@@ -1,3 +1,10 @@
+//This is an implemenation of our text decompressor. This decompresses a
+//decompressed text file and writes a file containing the decompressed data as
+//well as a log file with data about the decompression
+//Dalton Kohl
+//Bo Kulbacki
+//Date modified: 5/4/21
+
 import java.io.*;
 import java.util.*;
 
@@ -5,13 +12,14 @@ public class Decompress {
 		
 	public static void main(String args[])
 	{
+		//initialize variables
 		double timeStart = 0;
 		double timeFinish = 0;
 		boolean choosing = true;
 		HashTableChain<String, String> hashTable = new HashTableChain<>();
 		String fileName = "";
 		try{
-		
+		//get valid filename
 		fileName = args[0];
 		while(choosing){
 		hashTable = new HashTableChain<>();
@@ -31,9 +39,9 @@ public class Decompress {
 			String old = "";
 		
 			int putIndex = hashTable.numKeys;
-			System.out.println(putIndex);
 			int currentNum = file.readInt();
 			int oldNum=0;
+			//implement decompress algorithim from class
 			while(file.available()>0){
 				if(oldNum == 0)
 				{
@@ -42,9 +50,7 @@ public class Decompress {
 				else if(hashTable.get(String.valueOf(currentNum)) != null)
 					{
 						outputString += hashTable.get(String.valueOf(currentNum));
-						hashTable.put(String.valueOf((int)putIndex+32), hashTable.get(String.valueOf(oldNum)) + hashTable.get(String.valueOf(currentNum)).substring(0,1));//hashTable.get(String.valueOf(oldNum)).substring(0,1));
-						//	System.out.println("---IN DICT: output: "+ outputString);
-						//	System.out.println("---IN DICT: PUT: " + String.valueOf((int)putIndex+32) +" VALUE: " + ( hashTable.get(String.valueOf(oldNum)) + hashTable.get(String.valueOf(currentNum)).substring(0,1))); 
+						hashTable.put(String.valueOf((int)putIndex+32), hashTable.get(String.valueOf(oldNum)) + hashTable.get(String.valueOf(currentNum)).substring(0,1));
 					putIndex++;
 					}	
 				else
@@ -58,17 +64,17 @@ public class Decompress {
 				if(file.available() ==0)
 					{
 						outputString += hashTable.get(String.valueOf(currentNum));
-						//	System.out.println("DONE!!!!!!!!!!!!!!!!!!!!!!");
 					}	
 
 		}
-		timeFinish = System.nanoTime();
-		//	System.out.println("Final output string: " + outputString);
 
+		
+		timeFinish = System.nanoTime();
+		//output decompressed file
 		PrintWriter decompOutput = new PrintWriter(new FileOutputStream(fileName.substring(0, (fileName.length() -8))));
 		decompOutput.println(outputString);
 
-
+		//output log file
 		PrintWriter logOutput = new PrintWriter(new FileOutputStream(fileName.substring(0, (fileName.length()-4)) +".log"));
 		
 		double timeSeconds = (timeFinish - timeStart) / 1000000000;
@@ -79,6 +85,7 @@ public class Decompress {
 
 		logOutput.close();
 	
+		//ask user if they want to decompress another file
 		Scanner kb = new Scanner(System.in);
 		System.out.println("Would you like to Decompress another file (y/n)");
 		String cont = kb.nextLine();

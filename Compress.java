@@ -1,3 +1,10 @@
+//This is an implementation of our text compression that takes in a text file
+//and compresses it. This also creates a log with data about the compression
+//and a file that contains the compressed data.
+//Bo Kulbacki
+//Dalton Kohl
+//Date modified: 5/4/21
+
 import java.util.*;
 import java.io.*;
 
@@ -7,6 +14,7 @@ public class Compress{
 		String fileName = args[0];
 		boolean choosing = true;
 		while(choosing){
+		//get valid filename
 		HashTableChain<String, String> hashTable = new HashTableChain<>();
 		File validateName =new File(fileName);
 		while (!validateName.exists() )
@@ -22,15 +30,15 @@ public class Compress{
 		String outputString="";
 			hashTable = loadAscii(hashTable);
 			String oldString;
-			//new Friday work 
 			ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fileName + ".zzz"));
 
-			//need to figure out how to read entire file into one string
+			//creating variables
 			int currentChar;
 			int writeInt;
 			String inputString = Character.toString((char)input.read());
 			oldString = inputString;
 			int putIndex = hashTable.numKeys;
+			//compression algorithim
 			while(input.ready()){
 				//while current string is in dictionary
 				//	add next index to current string
@@ -40,14 +48,7 @@ public class Compress{
 					currentChar = input.read();
 					inputString += Character.toString((char)currentChar);
 				}
-				//if current string is not in dictionary 
-				//add previous string to output string
-				//add current string to dictionary 
-				//	System.out.println("string in dict: " + oldString + " output added: " + hashTable.get(oldString));
-				//	System.out.println("string not in dict: "+inputString + " added to dict: "+String.valueOf(putIndex+32));
-				//UTF WAYoutputString += hashTable.get(oldString);
-				//NEW
-				
+							
 				outputString = hashTable.get(oldString);
 
 				hashTable.put(inputString, String.valueOf((putIndex)+32));
@@ -64,10 +65,9 @@ public class Compress{
 		
 		}
 
-		//ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fileName +".zzz"));
-		//output.writeUTF(outputString);
 		output.close();
-
+	
+		//write the log file
 		PrintWriter logOutput = new PrintWriter(new FileOutputStream(fileName +".zzz.log"));
 		logOutput.println("Compression of "+ fileName);
 		File f = new File(fileName);
@@ -77,7 +77,7 @@ public class Compress{
 		logOutput.println("The table was reshashed " + hashTable.timesRehashed + " times");
 		logOutput.close();
 		
-		
+		//ask user if they would like to compress another file
 		Scanner kb = new Scanner(System.in);
 		System.out.println("Would you like to Compress another file? (y/n)");
 		String choice = kb.nextLine();

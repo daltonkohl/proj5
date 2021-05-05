@@ -1,3 +1,9 @@
+//This is a helper class that we use to get the next prime number for the size
+//of our hash table.
+//Dalton Kohl
+//Bo Kulbacki
+//Date modified: 5/4/21
+
 public class getNextPrime{	
 	public static int getNextPrime(int currentValue){
 		int next = currentValue *2;

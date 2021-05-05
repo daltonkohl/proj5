@@ -1,3 +1,9 @@
+//This is the implementation of our HashTableChain that implements our
+//KWHashMap interface. 
+//Dalton Kohl
+//Bo Kulbacki
+//Date modified: 5/4/21
+
 import java.util.*;
 import java.io.*;
 
